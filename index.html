@@ -121,7 +121,7 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow shadow-sm transition">
                     <span class="text-xs text-slate-500 font-bold"><i class="fa-solid fa-bullseye text-red-500 ml-1"></i> الإنتاج المخطط</span>
                     <span id="kpi-planned" class="text-2xl font-black text-elaraby-navy mt-2 font-mono">-</span>
-                    <span class="text-[10px] text-slate-400 font-semibold mt-1">المستهدف وفق الساعات</span>
+                    <span class="text-[10px] text-slate-400 font-semibold mt-1">المستهدف وفق المخطط</span>
                 </div>
                 <!-- KPI 3 -->
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow shadow-sm transition">
@@ -359,6 +359,14 @@
                         actualQtyVal = parseFloat(actualQtyVal) || 0;
                     }
 
+                    // جديد: قراءة قيمة عمود الإنتاج المخطط مباشرة (العمود رقم 10 - الـ Index رقم 9)
+                    let plannedQtyVal = row[9];
+                    if (typeof plannedQtyVal === 'string') {
+                        plannedQtyVal = parseFloat(plannedQtyVal.replace(/,/g, '')) || 0;
+                    } else {
+                        plannedQtyVal = parseFloat(plannedQtyVal) || 0;
+                    }
+
                     let rate = parseFloat(row[6]) || ratesMap[itemVal] || 400; 
 
                     if (itemVal && dateISO) {
@@ -370,7 +378,8 @@
                             shift: shiftVal,
                             planned_rate: rate,
                             actual_hours: actualHours,
-                            actual_qty: actualQtyVal
+                            actual_qty: actualQtyVal,
+                            planned_qty: plannedQtyVal // حفظ القيمة المقروءة مباشرة من شيت الإكسيل
                         });
                     }
                 }
@@ -386,6 +395,15 @@
                 console.error(e);
             }
             return false;
+        }
+
+        // دالة مساعدة للحصول على الإنتاج المخطط مع إعطاء الأولوية للقيمة المقروءة من الإكسيل
+        function getPlannedValue(row) {
+            if (row.hasOwnProperty('planned_qty') && row.planned_qty !== null && row.planned_qty !== undefined && row.planned_qty > 0) {
+                return row.planned_qty;
+            }
+            // خطة بديلة احتياطية في حال كان الحقل فارغاً في الإكسيل
+            return (row.planned_rate || 0) * (row.actual_hours || 0);
         }
 
         function formatNum(num) {
@@ -525,7 +543,8 @@
             let itemSummary = {};
 
             filtered.forEach(row => {
-                const planned = row.planned_rate * row.actual_hours;
+                // تعديل: استخدام دالة جلب المخطط لقراءة القيمة من شيت الإكسيل
+                const planned = getPlannedValue(row);
                 totalActual += row.actual_qty;
                 totalPlanned += planned;
                 itemsSet.add(row.item);
@@ -575,7 +594,8 @@
             tbody.innerHTML = '';
 
             filtered.forEach(row => {
-                const planned = row.planned_rate * row.actual_hours;
+                // تعديل: استخدام دالة جلب المخطط لقراءة القيمة من شيت الإكسيل في الجدول والتأثير على الحسابات الأخرى
+                const planned = getPlannedValue(row);
                 const diff = row.actual_qty - planned;
                 const rate = planned > 0 ? (row.actual_qty / planned) * 100 : 0;
                 
