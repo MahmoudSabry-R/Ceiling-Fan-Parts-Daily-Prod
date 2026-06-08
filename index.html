@@ -60,7 +60,7 @@
                 <!-- Action & Filters Section -->
                 <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3 bg-elaraby-dark p-3 rounded-lg border border-slate-700 w-full lg:w-auto">
                     
-                    <!-- Alert Status -->
+                    <!-- Alert Status (هنا تظهر حالة التحديث التلقائي من GitHub) -->
                     <div id="data-status-alert" class="text-xs font-bold text-elaraby-gold bg-elaraby-navy px-3 py-1.5 rounded border border-slate-600">
                         <i class="fa-solid fa-spinner fa-spin ml-1"></i> جاري جلب ملف البيانات تلقائياً...
                     </div>
@@ -71,12 +71,6 @@
                         <span>تحميل يدوي بديل</span>
                         <input type="file" id="excel-file-input" class="absolute inset-0 opacity-0 cursor-pointer" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
                     </div>
-
-                    <!-- Export Dynamic Dashboard Button -->
-                    <button onclick="exportUpdatedDashboard()" class="flex items-center bg-indigo-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-indigo-700 transition shadow">
-                        <i class="fa-solid fa-share-nodes ml-1.5"></i>
-                        <span>تصدير نسخة للمشاركة 📤</span>
-                    </button>
 
                     <div class="h-8 w-[1px] bg-slate-700 hidden sm:block"></div>
 
@@ -273,7 +267,7 @@
 
     <!-- Script Section -->
     <script>
-        // /*DATABASE_START*/
+        // مصفوفة احتياطية للبيانات في حال عدم جلب البيانات من السيرفر
         let dbData = [
             { id: 1, date: "2026-06-07", dept: "بلاستيك", item: "علبة سقف الجديدهTCF56", shift: "وردية 1", planned_rate: 360, actual_hours: 4.00, actual_qty: 1260, planned_qty: 1440 },
             { id: 2, date: "2026-06-07", dept: "بلاستيك", item: "قاعدة علبة سقف الجديدهTCF56", shift: "وردية 1", planned_rate: 480, actual_hours: 4.75, actual_qty: 1920, planned_qty: 2280 },
@@ -286,7 +280,6 @@
             { id: 9, date: "2026-06-07", dept: "بلاستيك", item: "أكرة سقف الجديدهTCF56", shift: "وردية 3", planned_rate: 1080, actual_hours: 7.25, actual_qty: 5600, planned_qty: 7830 },
             { id: 10, date: "2026-06-07", dept: "مكابس", item: "براكيت مروحة سقف", shift: "وردية 3", planned_rate: 3000, actual_hours: 7.25, actual_qty: 21700, planned_qty: 21750 }
         ];
-        // /*DATABASE_END*/
 
         const ratesMap = {
             "علبة سقف الجديدهTCF56": 360,
@@ -302,15 +295,6 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initCharts();
-            // محاولة جلب البيانات المحفوظة محلياً على جهاز المستخدم أولاً
-            const savedData = localStorage.getItem('elaraby_dashboard_data');
-            if (savedData) {
-                try {
-                    dbData = JSON.parse(savedData);
-                } catch(e) {
-                    console.log("No saved storage data found, using baseline.");
-                }
-            }
             // جلب البيانات من ملف الإكسيل الموجود على السيرفر تلقائياً
             fetchDataFromServer();
         });
@@ -429,7 +413,6 @@
             if (row.hasOwnProperty('planned_qty') && row.planned_qty !== null && row.planned_qty !== undefined && row.planned_qty > 0) {
                 return row.planned_qty;
             }
-            // خطة بديلة في حال كان العمود فارغاً
             return (row.planned_rate || 0) * (row.actual_hours || 0);
         }
 
@@ -514,7 +497,7 @@
 
             let optionsHtml = '<option value="الكل">كل الأقسام</option>';
             uniqueDepts.forEach(dept => {
-                optionsHtml += `<option value="${dept}">${dept}</option>`;
+                optionsHtml += `<option value="${dept}">${dept}</option>';
             });
             deptFilter.innerHTML = optionsHtml;
 
@@ -532,37 +515,12 @@
             reader.onload = function(e) {
                 const parsed = parseExcelData(e.target.result);
                 if (parsed) {
-                    // حفظ للذاكرة المحلية كخطة بديلة للتشغيل المحلي
-                    localStorage.setItem('elaraby_dashboard_data', JSON.stringify(dbData));
                     alert("تم تحميل وحفظ البيانات وتحديث الداشبورد بنجاح!");
                 } else {
                     alert("فشل قراءة الملف المرفوع يدوياً.");
                 }
             };
             reader.readAsArrayBuffer(file);
-        }
-
-        // ميزة تصدير الملف كـ HTML مدمج به البيانات تلقائياً لإرساله للزملاء
-        function exportUpdatedDashboard() {
-            try {
-                let fullHtml = "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n" + document.documentElement.innerHTML + "\n</html>";
-                const dataReplacement = "/*DATABASE_START*/\n        let dbData = " + JSON.stringify(dbData) + ";\n        // /*DATABASE_END*/";
-                fullHtml = fullHtml.replace(/\/\*DATABASE_START\*\/[\s\S]*?\/\*DATABASE_END\*\//, dataReplacement);
-                
-                const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8" });
-                const downloadLink = document.createElement("a");
-                downloadLink.href = URL.createObjectURL(blob);
-                downloadLink.download = "dashboard_shared.html";
-                
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-                
-                alert("👍 تم تصدير نسخة مشحونة بالبيانات الحالية باسم (dashboard_shared.html).\nيمكنك إرسال هذا الملف لزملائك وسيفتح على أجهزتهم بالتحديثات مباشرة!");
-            } catch(e) {
-                console.error(e);
-                alert("حدث خطأ أثناء محاولة التصدير.");
-            }
         }
 
         function updateDashboard() {
@@ -595,7 +553,7 @@
             let itemSummary = {};
 
             filtered.forEach(row => {
-                const planned = getPlannedValue(row); // استدعاء دالة الحساب المحدثة
+                const planned = getPlannedValue(row); // قراءة القيمة القادمة من الإكسيل مباشرة
                 totalActual += row.actual_qty;
                 totalPlanned += planned;
                 itemsSet.add(row.item);
@@ -645,7 +603,7 @@
             tbody.innerHTML = '';
 
             filtered.forEach(row => {
-                const planned = getPlannedValue(row); // استدعاء دالة الحساب المحدثة
+                const planned = getPlannedValue(row); // قراءة القيمة القادمة من الإكسيل مباشرة
                 const diff = row.actual_qty - planned;
                 const rate = planned > 0 ? (row.actual_qty / planned) * 100 : 0;
                 
