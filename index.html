@@ -60,7 +60,7 @@
                 <!-- Action & Filters Section -->
                 <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3 bg-elaraby-dark p-3 rounded-lg border border-slate-700 w-full lg:w-auto">
                     
-                    <!-- Alert Status (هنا تظهر حالة التحديث التلقائي من GitHub) -->
+                    <!-- Alert Status -->
                     <div id="data-status-alert" class="text-xs font-bold text-elaraby-gold bg-elaraby-navy px-3 py-1.5 rounded border border-slate-600">
                         <i class="fa-solid fa-spinner fa-spin ml-1"></i> جاري جلب ملف البيانات تلقائياً...
                     </div>
@@ -121,7 +121,7 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow shadow-sm transition">
                     <span class="text-xs text-slate-500 font-bold"><i class="fa-solid fa-bullseye text-red-500 ml-1"></i> الإنتاج المخطط</span>
                     <span id="kpi-planned" class="text-2xl font-black text-elaraby-navy mt-2 font-mono">-</span>
-                    <span class="text-[10px] text-slate-400 font-semibold mt-1">المستهدف وفق المخطط</span>
+                    <span class="text-[10px] text-slate-400 font-semibold mt-1">المستهدف وفق الساعات</span>
                 </div>
                 <!-- KPI 3 -->
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow shadow-sm transition">
@@ -267,19 +267,8 @@
 
     <!-- Script Section -->
     <script>
-        // مصفوفة احتياطية للبيانات في حال عدم جلب البيانات من السيرفر
-        let dbData = [
-            { id: 1, date: "2026-06-07", dept: "بلاستيك", item: "علبة سقف الجديدهTCF56", shift: "وردية 1", planned_rate: 360, actual_hours: 4.00, actual_qty: 1260, planned_qty: 1440 },
-            { id: 2, date: "2026-06-07", dept: "بلاستيك", item: "قاعدة علبة سقف الجديدهTCF56", shift: "وردية 1", planned_rate: 480, actual_hours: 4.75, actual_qty: 1920, planned_qty: 2280 },
-            { id: 3, date: "2026-06-07", dept: "بلاستيك", item: "أكرة سقف الجديدهTCF56", shift: "وردية 1", planned_rate: 1080, actual_hours: 1.75, actual_qty: 780, planned_qty: 1890 },
-            { id: 4, date: "2026-06-07", dept: "بلاستيك", item: "علبة سقف الجديدهTCF56", shift: "وردية 2", planned_rate: 360, actual_hours: 7.50, actual_qty: 2640, planned_qty: 2700 },
-            { id: 5, date: "2026-06-07", dept: "بلاستيك", item: "قاعدة علبة سقف الجديدهTCF56", shift: "وردية 2", planned_rate: 480, actual_hours: 8.00, actual_qty: 3800, planned_qty: 3840 },
-            { id: 6, date: "2026-06-07", dept: "بلاستيك", item: "أكرة سقف الجديدهTCF56", shift: "وردية 2", planned_rate: 1080, actual_hours: 5.75, actual_qty: 4250, planned_qty: 6210 },
-            { id: 7, date: "2026-06-07", dept: "بلاستيك", item: "علبة سقف الجديدهTCF56", shift: "وردية 3", planned_rate: 360, actual_hours: 7.00, actual_qty: 2600, planned_qty: 2520 },
-            { id: 8, date: "2026-06-07", dept: "بلاستيك", item: "قاعدة علبة سقف الجديدهTCF56", shift: "وردية 3", planned_rate: 480, actual_hours: 7.25, actual_qty: 3600, planned_qty: 3480 },
-            { id: 9, date: "2026-06-07", dept: "بلاستيك", item: "أكرة سقف الجديدهTCF56", shift: "وردية 3", planned_rate: 1080, actual_hours: 7.25, actual_qty: 5600, planned_qty: 7830 },
-            { id: 10, date: "2026-06-07", dept: "مكابس", item: "براكيت مروحة سقف", shift: "وردية 3", planned_rate: 3000, actual_hours: 7.25, actual_qty: 21700, planned_qty: 21750 }
-        ];
+        // مصفوفة افتراضية فارغة لحين جلب البيانات
+        let dbData = [];
 
         const ratesMap = {
             "علبة سقف الجديدهTCF56": 360,
@@ -370,14 +359,6 @@
                         actualQtyVal = parseFloat(actualQtyVal) || 0;
                     }
 
-                    // قراءة عمود الإنتاج المخطط مباشرة (العمود رقم 10 - الـ Index رقم 9)
-                    let plannedQtyVal = row[9];
-                    if (typeof plannedQtyVal === 'string') {
-                        plannedQtyVal = parseFloat(plannedQtyVal.replace(/,/g, '')) || 0;
-                    } else {
-                        plannedQtyVal = parseFloat(plannedQtyVal) || 0;
-                    }
-
                     let rate = parseFloat(row[6]) || ratesMap[itemVal] || 400; 
 
                     if (itemVal && dateISO) {
@@ -389,8 +370,7 @@
                             shift: shiftVal,
                             planned_rate: rate,
                             actual_hours: actualHours,
-                            actual_qty: actualQtyVal,
-                            planned_qty: plannedQtyVal // تخزين القيمة القادمة من الإكسيل مباشرة
+                            actual_qty: actualQtyVal
                         });
                     }
                 }
@@ -406,14 +386,6 @@
                 console.error(e);
             }
             return false;
-        }
-
-        // دالة مساعدة لحساب المخطط مع إعطاء الأولوية للعمود المستورد من الإكسيل
-        function getPlannedValue(row) {
-            if (row.hasOwnProperty('planned_qty') && row.planned_qty !== null && row.planned_qty !== undefined && row.planned_qty > 0) {
-                return row.planned_qty;
-            }
-            return (row.planned_rate || 0) * (row.actual_hours || 0);
         }
 
         function formatNum(num) {
@@ -497,7 +469,7 @@
 
             let optionsHtml = '<option value="الكل">كل الأقسام</option>';
             uniqueDepts.forEach(dept => {
-                optionsHtml += `<option value="${dept}">${dept}</option>';
+                optionsHtml += `<option value="${dept}">${dept}</option>`;
             });
             deptFilter.innerHTML = optionsHtml;
 
@@ -515,7 +487,7 @@
             reader.onload = function(e) {
                 const parsed = parseExcelData(e.target.result);
                 if (parsed) {
-                    alert("تم تحميل وحفظ البيانات وتحديث الداشبورد بنجاح!");
+                    alert("تم تحميل البيانات وتحديث الداشبورد بنجاح!");
                 } else {
                     alert("فشل قراءة الملف المرفوع يدوياً.");
                 }
@@ -553,7 +525,7 @@
             let itemSummary = {};
 
             filtered.forEach(row => {
-                const planned = getPlannedValue(row); // قراءة القيمة القادمة من الإكسيل مباشرة
+                const planned = row.planned_rate * row.actual_hours;
                 totalActual += row.actual_qty;
                 totalPlanned += planned;
                 itemsSet.add(row.item);
@@ -603,7 +575,7 @@
             tbody.innerHTML = '';
 
             filtered.forEach(row => {
-                const planned = getPlannedValue(row); // قراءة القيمة القادمة من الإكسيل مباشرة
+                const planned = row.planned_rate * row.actual_hours;
                 const diff = row.actual_qty - planned;
                 const rate = planned > 0 ? (row.actual_qty / planned) * 100 : 0;
                 
