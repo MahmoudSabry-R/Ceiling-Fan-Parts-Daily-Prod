@@ -7,7 +7,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- ApexCharts -->
@@ -52,8 +52,8 @@
         <header class="bg-elaraby-navy text-white shadow-md border-b-4 border-elaraby-gold">
             <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-center gap-4">
                 <div class="text-right">
-                    <span class="text-xs uppercase tracking-wider text-elaraby-gold font-bold">تقرير الإنتاج والتطوير | PRODUCTION DASHBOARD</span>
-                    <h1 class="text-2xl md:text-3xl font-extrabold mt-1">مروحة السقف - قسم الإنتاج</h1>
+                    <span class="text-xs uppercase tracking-wider text-elaraby-gold font-bold">تقرير الإنتاج | PRODUCTION DASHBOARD</span>
+                    <h1 class="text-2xl md:text-3xl font-extrabold mt-1">أجزاء مروحة السقف - SHA1</h1>
                     <p class="text-sm text-slate-300 mt-1"><i class="fa-regular fa-calendar-days ml-1"></i> فترة التقرير: من <span id="dashboard-start-date" class="font-bold text-white">-</span> إلى <span id="dashboard-end-date" class="font-bold text-white">-</span></p>
                 </div>
                 
@@ -155,9 +155,9 @@
                 <div class="lg:col-span-4 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
                     <h2 class="text-md font-bold text-elaraby-navy mb-4 pb-2 border-b border-slate-100 flex items-center">
                         <i class="fa-solid fa-chart-simple ml-2 text-elaraby-gold"></i>
-                        التحليل البياني للأداء (تفاعلي بالتواريخ والأقسام)
+                        التحليل البياني للأداء الشامل (الورديات - الأصناف - الأقسام)
                     </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Chart 1: Actual Production by Shift -->
                         <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
                             <h3 class="text-xs font-bold text-center text-slate-700 mb-2">الإنتاج الفعلي - بالوردية (قطعة)</h3>
@@ -178,6 +178,16 @@
                             <h3 class="text-xs font-bold text-center text-slate-700 mb-2">توزيع ومعدل الإنجاز العام</h3>
                             <div id="chart-donut-distribution" class="h-56 flex items-center justify-center"></div>
                         </div>
+                        <!-- Chart 5 (New): Actual vs Planned by Department -->
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <h3 class="text-xs font-bold text-center text-slate-700 mb-2">فعلي مقابل مخطط - بالأقسام</h3>
+                            <div id="chart-dept-comparison" class="h-56"></div>
+                        </div>
+                        <!-- Chart 6 (New): Achievement Rate % by Department -->
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <h3 class="text-xs font-bold text-center text-slate-700 mb-2">نسبة الإنجاز % - بالأقسام</h3>
+                            <div id="chart-dept-achievement" class="h-56"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -195,7 +205,8 @@
                     <table class="w-full text-right text-xs">
                         <thead>
                             <tr class="bg-elaraby-navy text-white font-bold text-[11px]">
-                                <th class="p-3 rounded-r">الوردية</th>
+                                <th class="p-3 rounded-r">التاريخ</th>
+                                <th class="p-3">الوردية</th>
                                 <th class="p-3">اسم الصنف</th>
                                 <th class="p-3 text-center">معدل مخطط (ساعة)</th>
                                 <th class="p-3 text-center">ساعات التشغيل</th>
@@ -210,7 +221,7 @@
                         </tbody>
                         <tfoot>
                             <tr class="bg-slate-100 font-bold text-elaraby-navy text-sm">
-                                <td colspan="4" class="p-3 text-right rounded-r">الإجمالي الكلي لخيارات البحث:</td>
+                                <td colspan="5" class="p-3 text-right rounded-r">الإجمالي الكلي لخيارات البحث:</td>
                                 <td id="total-planned-row" class="p-3 text-center font-mono">-</td>
                                 <td id="total-actual-row" class="p-3 text-center font-mono">-</td>
                                 <td id="total-gap-row" class="p-3 text-center font-mono">-</td>
@@ -222,7 +233,7 @@
             </div>
 
             <!-- Bottom Dashboard Footer Panel -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Shift Details Card -->
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                     <h3 class="text-sm font-bold text-elaraby-navy mb-3 pb-2 border-b border-slate-100">
@@ -243,13 +254,23 @@
                     </div>
                 </div>
 
-                <!-- Notes & Recommendations -->
+                <!-- Operational Notes Card (فصل وتوسيع الملاحظات) -->
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                     <h3 class="text-sm font-bold text-elaraby-navy mb-3 pb-2 border-b border-slate-100">
-                        <i class="fa-solid fa-comment-dots ml-1.5 text-elaraby-gold"></i>الملاحظات والتوصيات
+                        <i class="fa-solid fa-magnifying-glass-chart ml-1.5 text-elaraby-gold"></i>الملاحظات والتحليلات التشغيلية
+                    </h3>
+                    <ul id="operational-notes-list" class="space-y-2 text-xs text-slate-600 font-semibold list-disc pr-4">
+                        <!-- Dynamic notes -->
+                    </ul>
+                </div>
+
+                <!-- Recommendations Card (فصل وتوسيع التوصيات) -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-bold text-elaraby-navy mb-3 pb-2 border-b border-slate-100">
+                        <i class="fa-solid fa-comment-dots ml-1.5 text-elaraby-gold"></i>التوصيات وإجراءات التحسين
                     </h3>
                     <ul id="recommendations-list" class="space-y-2 text-xs text-slate-600 font-semibold list-disc pr-4">
-                        <!-- Dynamic notes based on data -->
+                        <!-- Dynamic recommendations -->
                     </ul>
                 </div>
             </div>
@@ -258,8 +279,9 @@
 
         <!-- Summary Footer Ribbon -->
         <footer class="bg-elaraby-navy text-slate-300 py-3 text-center text-xs mt-auto border-t border-slate-700">
-            <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
                 <span>تم تطوير لوحة البيانات لقراءة السيرفر تلقائياً.</span>
+                <span class="text-elaraby-gold font-bold text-sm tracking-wide">Designed by / Eng. Mahmoud Sabry</span>
                 <span class="text-elaraby-gold font-bold">مجموعة العربي - صناع الثقة © 2026</span>
             </div>
         </footer>
@@ -280,7 +302,7 @@
             "ريشة مروحة سقف نهائى (برشمة)": 400
         };
 
-        let chart1, chart2, chart3, chart4;
+        let chart1, chart2, chart3, chart4, chart5, chart6;
 
         window.addEventListener('DOMContentLoaded', () => {
             initCharts();
@@ -541,9 +563,9 @@
             let itemsSet = new Set();
             let shiftPerformance = { "وردية 1": { actual: 0, planned: 0 }, "وردية 2": { actual: 0, planned: 0 }, "وردية 3": { actual: 0, planned: 0 } };
             let itemSummary = {};
+            let deptSummary = {}; // حسابات الأقسام للتشارتات الجديدة
 
             filtered.forEach(row => {
-                // تعديل: استخدام دالة جلب المخطط لقراءة القيمة من شيت الإكسيل
                 const planned = getPlannedValue(row);
                 totalActual += row.actual_qty;
                 totalPlanned += planned;
@@ -560,6 +582,14 @@
                 }
                 itemSummary[shortItemName].actual += row.actual_qty;
                 itemSummary[shortItemName].planned += planned;
+
+                // تجميع بيانات الأقسام
+                let deptName = row.dept ? row.dept.trim() : "غير محدد";
+                if (!deptSummary[deptName]) {
+                    deptSummary[deptName] = { actual: 0, planned: 0 };
+                }
+                deptSummary[deptName].actual += row.actual_qty;
+                deptSummary[deptName].planned += planned;
             });
 
             const gap = totalActual - totalPlanned;
@@ -594,7 +624,6 @@
             tbody.innerHTML = '';
 
             filtered.forEach(row => {
-                // تعديل: استخدام دالة جلب المخطط لقراءة القيمة من شيت الإكسيل في الجدول والتأثير على الحسابات الأخرى
                 const planned = getPlannedValue(row);
                 const diff = row.actual_qty - planned;
                 const rate = planned > 0 ? (row.actual_qty / planned) * 100 : 0;
@@ -606,8 +635,10 @@
                     rateBadgeColor = "bg-amber-50 text-amber-700 border-amber-200";
                 }
 
+                // عرض التاريخ قبل الوردية مباشرة في جدول الإنتاج التفصيلي
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 text-slate-600 font-mono">${formatDateDisplay(row.date)}</td>
                         <td class="p-3 text-slate-600"><span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded">${row.shift}</span></td>
                         <td class="p-3 text-slate-900 font-bold">${row.item}</td>
                         <td class="p-3 text-center font-mono">${formatNum(row.planned_rate)}</td>
@@ -672,19 +703,40 @@
                 `;
             });
 
-            const notesList = document.getElementById('recommendations-list');
+            // توليد الملاحظات التشغيلية المفصلة ديناميكياً
+            const notesList = document.getElementById('operational-notes-list');
             notesList.innerHTML = '';
-            if (achievementRate < 80) {
-                notesList.innerHTML += `<li class="text-red-600 font-bold">⚠ انخفاض في نسبة الإنجاز الإجمالية للخيارات النشطة (${achievementRate.toFixed(1)}%).</li>`;
-            } else {
-                notesList.innerHTML += `<li class="text-emerald-600 font-bold">✔ مؤشرات الكفاءة جيدة وتتجاوز خط الأمان (80%).</li>`;
-            }
-            if (bestShiftVal > 0) {
-                notesList.innerHTML += `<li>الوردية الأعلى أداءً هي <strong>${bestShiftName}</strong> بإنتاج <strong>${formatNum(bestShiftVal)}</strong> قطعة.</li>`;
-            }
-            notesList.innerHTML += `<li>الداشبورد يغطي حالياً تصفية فترات إنتاجية بين تاريخي (من/إلى) المحددين بالهيدر.</li>`;
+            if (filtered.length > 0) {
+                const worstItem = Object.keys(itemSummary).sort((a,b) => {
+                    const rA = itemSummary[a].planned > 0 ? itemSummary[a].actual / itemSummary[a].planned : 0;
+                    const rB = itemSummary[b].planned > 0 ? itemSummary[b].actual / itemSummary[b].planned : 0;
+                    return rA - rB;
+                })[0];
+                const worstItemRate = itemSummary[worstItem].planned > 0 ? (itemSummary[worstItem].actual / itemSummary[worstItem].planned) * 100 : 0;
 
-            updateChartsData(shiftPerformance, itemSummary, achievementRate);
+                notesList.innerHTML += `<li>تحليل الإنتاج يغطي عدد <strong>${itemsSet.size}</strong> من الأصناف والمنتجات النشطة بموقع العمل SHA1.</li>`;
+                notesList.innerHTML += `<li>معدل الإنجاز الكلي الموحد لخيارات الفلترة يبلغ حالياً <strong>${achievementRate.toFixed(1)}%</strong>.</li>`;
+                if (gap < 0) {
+                    notesList.innerHTML += `<li class="text-red-600">هناك فجوة تشغيلية إجمالية قدرها <strong>${formatNum(Math.abs(gap))} قطعة</strong> عجز عن الخطة المستهدفة.</li>`;
+                } else {
+                    notesList.innerHTML += `<li class="text-emerald-600">تحقق فائض إنتاجي متميز قدره <strong>${formatNum(gap)} قطعة</strong> إضافية فوق المستهدف.</li>`;
+                }
+                notesList.innerHTML += `<li>الوردية الأكثر أداءً وإنتاجية هي <strong>${bestShiftName}</strong> بإنتاج مجمّع قدره <strong>${formatNum(bestShiftVal)} قطعة</strong>.</li>`;
+                notesList.innerHTML += `<li>أقل صنف من حيث الإنجاز مقارنة بالخطة هو <strong>${worstItem}</strong> بنسبة كفاءة بلغت <strong>${worstItemRate.toFixed(1)}%</strong>.</li>`;
+            } else {
+                notesList.innerHTML += `<li>لا تتوفر بيانات إنتاج كافية لعرض التحليل التشغيلي لخيارات البحث.</li>`;
+            }
+
+            // توليد التوصيات الهندسية المخصصة وإجراءات التحسين ديناميكياً
+            const recsList = document.getElementById('recommendations-list');
+            recsList.innerHTML = '';
+            recsList.innerHTML += `<li>ضرورة مراجعة الطاقة الإنتاجية وكفاءة المعدات في الأقسام والورديات التي تظهر كفاءة عمل أقل من 80%.</li>`;
+            recsList.innerHTML += `<li>جدولة جلسة صيانة وقائية طارئة لخطوط تصنيع وتجميع الأصناف ذات العجز الإنتاجي المرتفع لتلافي الأعطال.</li>`;
+            recsList.innerHTML += `<li>إعادة توزيع الكوادر التشغيلية وتوجيه الكفاءات لدعم الورديات ذات الأداء المنخفض تماشياً مع كفاءة الوردية الأعلى أداءً.</li>`;
+            recsList.innerHTML += `<li>مراجعة سلاسل التوريد ومعدلات تدفق المواد الخام للتأكد من عدم توقف الماكينات بسبب نقص الإمدادات التشغيلية.</li>`;
+            recsList.innerHTML += `<li>إجراء دراسة هندسية تفصيلية لتحليل وتوحيد وتيرة ومستوى الأداء عبر الورديات الثلاث لضمان استقرار الإنتاج اليومي.</li>`;
+
+            updateChartsData(shiftPerformance, itemSummary, achievementRate, deptSummary);
         }
 
         function initCharts() {
@@ -757,9 +809,40 @@
             };
             chart4 = new ApexCharts(document.querySelector("#chart-donut-distribution"), options4);
             chart4.render();
+
+            // جديد: تهيئة شارت الفعلي ضد المخطط للأقسام
+            const options5 = {
+                chart: { type: 'bar', height: '100%', toolbar: { show: false } },
+                series: [
+                    { name: 'الفعلي', data: [] },
+                    { name: 'المخطط', data: [] }
+                ],
+                xaxis: { categories: [], labels: { style: { fontFamily: 'Cairo', fontSize: '9px' } } },
+                colors: ['#0b2545', '#cca43b'],
+                plotOptions: { bar: { horizontal: false, columnWidth: '55%', borderRadius: 3 } },
+                dataLabels: { enabled: false },
+                legend: { position: 'bottom', fontFamily: 'Cairo', fontSize: '10px' },
+                yaxis: { show: false }
+            };
+            chart5 = new ApexCharts(document.querySelector("#chart-dept-comparison"), options5);
+            chart5.render();
+
+            // جديد: تهيئة شارت نسبة الإنجاز للأقسام
+            const options6 = {
+                chart: { type: 'bar', height: '100%', toolbar: { show: false } },
+                series: [{ name: 'نسبة الإنجاز %', data: [] }],
+                xaxis: { categories: [], labels: { style: { fontFamily: 'Cairo', fontSize: '9px' } } },
+                colors: ['#10b981'],
+                plotOptions: { bar: { horizontal: true, barHeight: '50%', borderRadius: 3 } },
+                dataLabels: { enabled: true, formatter: val => val.toFixed(1) + '%', style: { fontFamily: 'Cairo' } },
+                yaxis: { labels: { style: { fontFamily: 'Cairo' } } },
+                xaxis: { max: 120, labels: { formatter: val => val + '%' } }
+            };
+            chart6 = new ApexCharts(document.querySelector("#chart-dept-achievement"), options6);
+            chart6.render();
         }
 
-        function updateChartsData(shiftPerformance, itemSummary, overallRate) {
+        function updateChartsData(shiftPerformance, itemSummary, overallRate, deptSummary) {
             chart1.updateSeries([{
                 data: [
                     shiftPerformance["وردية 1"].actual,
@@ -799,6 +882,32 @@
             chart4.updateOptions({
                 colors: [gaugeColor]
             });
+
+            // جديد: تحديث بيانات شارت الأقسام الفعلي مقابل المخطط
+            const deptNames = Object.keys(deptSummary);
+            const deptActuals = deptNames.map(name => deptSummary[name].actual);
+            const deptPlanneds = deptNames.map(name => deptSummary[name].planned);
+            const deptRates = deptNames.map(name => {
+                const p = deptSummary[name].planned;
+                return p > 0 ? (deptSummary[name].actual / p) * 100 : 0;
+            });
+
+            chart5.updateOptions({
+                xaxis: { categories: deptNames }
+            });
+            chart5.updateSeries([
+                { name: 'الفعلي', data: deptActuals },
+                { name: 'المخطط', data: deptPlanneds }
+            ]);
+
+            // جديد: تحديث بيانات شارت الأقسام لنسبة الإنجاز
+            chart6.updateOptions({
+                yaxis: { categories: deptNames }
+            });
+            chart6.updateSeries([{
+                name: 'نسبة الإنجاز %',
+                data: deptRates
+            }]);
         }
     </script>
 </body>
