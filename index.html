@@ -706,13 +706,15 @@
             // توليد الملاحظات التشغيلية المفصلة ديناميكياً
             const notesList = document.getElementById('operational-notes-list');
             notesList.innerHTML = '';
+            let worstItem = "-";
+            let worstItemRate = 120;
             if (filtered.length > 0) {
-                const worstItem = Object.keys(itemSummary).sort((a,b) => {
+                worstItem = Object.keys(itemSummary).sort((a,b) => {
                     const rA = itemSummary[a].planned > 0 ? itemSummary[a].actual / itemSummary[a].planned : 0;
                     const rB = itemSummary[b].planned > 0 ? itemSummary[b].actual / itemSummary[b].planned : 0;
                     return rA - rB;
                 })[0];
-                const worstItemRate = itemSummary[worstItem].planned > 0 ? (itemSummary[worstItem].actual / itemSummary[worstItem].planned) * 100 : 0;
+                worstItemRate = itemSummary[worstItem].planned > 0 ? (itemSummary[worstItem].actual / itemSummary[worstItem].planned) * 100 : 0;
 
                 notesList.innerHTML += `<li>تحليل الإنتاج يغطي عدد <strong>${itemsSet.size}</strong> من الأصناف والمنتجات النشطة بموقع العمل SHA1.</li>`;
                 notesList.innerHTML += `<li>معدل الإنجاز الكلي الموحد لخيارات الفلترة يبلغ حالياً <strong>${achievementRate.toFixed(1)}%</strong>.</li>`;
@@ -727,14 +729,67 @@
                 notesList.innerHTML += `<li>لا تتوفر بيانات إنتاج كافية لعرض التحليل التشغيلي لخيارات البحث.</li>`;
             }
 
-            // توليد التوصيات الهندسية المخصصة وإجراءات التحسين ديناميكياً
+            // توليد التوصيات الهندسية المخصصة وإجراءات التحسين ديناميكياً (محدث ليكون تفاعلياً وذكياً بالكامل)
             const recsList = document.getElementById('recommendations-list');
             recsList.innerHTML = '';
-            recsList.innerHTML += `<li>ضرورة مراجعة الطاقة الإنتاجية وكفاءة المعدات في الأقسام والورديات التي تظهر كفاءة عمل أقل من 80%.</li>`;
-            recsList.innerHTML += `<li>جدولة جلسة صيانة وقائية طارئة لخطوط تصنيع وتجميع الأصناف ذات العجز الإنتاجي المرتفع لتلافي الأعطال.</li>`;
-            recsList.innerHTML += `<li>إعادة توزيع الكوادر التشغيلية وتوجيه الكفاءات لدعم الورديات ذات الأداء المنخفض تماشياً مع كفاءة الوردية الأعلى أداءً.</li>`;
-            recsList.innerHTML += `<li>مراجعة سلاسل التوريد ومعدلات تدفق المواد الخام للتأكد من عدم توقف الماكينات بسبب نقص الإمدادات التشغيلية.</li>`;
-            recsList.innerHTML += `<li>إجراء دراسة هندسية تفصيلية لتحليل وتوحيد وتيرة ومستوى الأداء عبر الورديات الثلاث لضمان استقرار الإنتاج اليومي.</li>`;
+            
+            if (filtered.length > 0) {
+                // 1. فحص كفاءة الأقسام والتحذير من المتعثرة
+                let lowPerfDepts = [];
+                Object.keys(deptSummary).forEach(d => {
+                    const p = deptSummary[d].planned;
+                    const r = p > 0 ? (deptSummary[d].actual / p) * 100 : 0;
+                    if (r < 85) {
+                        lowPerfDepts.push({ name: d, rate: r });
+                    }
+                });
+                if (lowPerfDepts.length > 0) {
+                    lowPerfDepts.forEach(d => {
+                        recsList.innerHTML += `<li>تركيز جهود المتابعة الهندسية الفورية على قسم <span class="font-bold">(${d.name})</span> نظراً لانخفاض كفاءة الإنجاز فيه لتصل إلى <span class="text-amber-600 font-bold">${d.rate.toFixed(1)}%</span>.</li>`;
+                    });
+                } else {
+                    recsList.innerHTML += `<li>جميع الأقسام التشغيلية تعمل بمعدل أداء متميز أعلى من 85%، يوصى بالحفاظ على وتيرة الصيانة الوقائية الحالية لضمان استمرارية هذا الإنتاج الممتاز.</li>`;
+                }
+
+                // 2. صيانة وقائية طارئة للصنف الأسوأ أداءً
+                if (worstItem !== "-" && worstItemRate < 90) {
+                    const itemDeficit = itemSummary[worstItem].planned - itemSummary[worstItem].actual;
+                    if (itemDeficit > 0) {
+                        recsList.innerHTML += `<li>جدولة جلسة صيانة فنية ومعايرة عاجلة للخطوط والآلات المخصصة لإنتاج صنف <span class="font-bold">(${worstItem})</span> لتلافي الفجوة الحالية البالغة <span class="text-red-500 font-bold">${formatNum(itemDeficit)} قطعة</span>.</li>`;
+                    }
+                }
+
+                // 3. إعادة توزيع عمالة الصف الأول لدعم الوردية المتعثرة
+                let worstShiftName = "-";
+                let worstShiftRate = 120;
+                Object.keys(shiftPerformance).forEach(s => {
+                    const p = shiftPerformance[s].planned;
+                    const r = p > 0 ? (shiftPerformance[s].actual / p) * 100 : 0;
+                    if (r < worstShiftRate && p > 0) {
+                        worstShiftRate = r;
+                        worstShiftName = s;
+                    }
+                });
+                if (worstShiftName !== "-" && worstShiftRate < 90) {
+                    recsList.innerHTML += `<li>توجيه بعض عمالة ومراقبي الصف الأول من <span class="font-bold">${bestShiftName}</span> لتدعيم خطوط الإنتاج والآلات خلال <span class="font-bold">${worstShiftName}</span> لرفع نسبة كفاءتها الحالية البالغة <span class="text-amber-600 font-bold">${worstShiftRate.toFixed(1)}%</span>.</li>`;
+                }
+
+                // 4. مراجعة المخزون في حالة وجود عجز كلي
+                if (gap < 0) {
+                    recsList.innerHTML += `<li>مراجعة سلاسل التوريد ومعدلات تدفق المواد الخام للتأكد من عدم حدوث "توقف جاف" (Stockouts) للآلات، مما يتسبب في إعاقة الكفاءة بموقع <span class="font-bold">SHA1</span>.</li>`;
+                } else {
+                    recsList.innerHTML += `<li>تعميم معايير العمل القياسية المتبعة في الورديات الناجحة لهذا اليوم على باقي الأيام والورديات لضمان ثبات معدلات الفائض الإنتاجي.</li>`;
+                }
+
+                // 5. توصيات عامة للماكينات ونظام الأعطال
+                if (achievementRate < 80) {
+                    recsList.innerHTML += `<li>تفعيل نظام التتبع الفوري للأعطال وتقليص زمن تجهيز وإعداد الآلات (Setup Times) لرفع الكفاءة العامة البالغة <span class="text-red-600 font-bold">${achievementRate.toFixed(1)}%</span> لتتخطى خط الأمان (80%).</li>`;
+                } else {
+                    recsList.innerHTML += `<li>إجراء دراسة هندسية تفصيلية لتوحيد وتيرة الأداء عبر الورديات لضمان استمرارية استقرار معدل الكفاءة الحالي البالغ <span class="text-emerald-600 font-bold">${achievementRate.toFixed(1)}%</span>.</li>`;
+                }
+            } else {
+                recsList.innerHTML += `<li>لا تتوفر بيانات تشغيلية كافية لتوليد توصيات هندسية مخصصة.</li>`;
+            }
 
             updateChartsData(shiftPerformance, itemSummary, achievementRate, deptSummary);
         }
