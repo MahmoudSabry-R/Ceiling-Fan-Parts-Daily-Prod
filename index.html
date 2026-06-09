@@ -827,16 +827,28 @@
             chart5 = new ApexCharts(document.querySelector("#chart-dept-comparison"), options5);
             chart5.render();
 
-            // جديد: تهيئة شارت نسبة الإنجاز للأقسام
+            // جديد: تهيئة شارت نسبة الإنجاز للأقسام (تم تعديله هنا ليكون شارت رأسي لضمان ظهور أسماء الأقسام بالكامل بالأسفل بشكل مثالي)
             const options6 = {
                 chart: { type: 'bar', height: '100%', toolbar: { show: false } },
                 series: [{ name: 'نسبة الإنجاز %', data: [] }],
-                xaxis: { categories: [], labels: { style: { fontFamily: 'Cairo', fontSize: '9px' } } },
+                xaxis: { 
+                    categories: [], 
+                    labels: { style: { fontFamily: 'Cairo', fontSize: '9px' } } 
+                },
                 colors: ['#10b981'],
-                plotOptions: { bar: { horizontal: true, barHeight: '50%', borderRadius: 3 } },
-                dataLabels: { enabled: true, formatter: val => val.toFixed(1) + '%', style: { fontFamily: 'Cairo' } },
-                yaxis: { labels: { style: { fontFamily: 'Cairo' } } },
-                xaxis: { max: 120, labels: { formatter: val => val + '%' } }
+                plotOptions: { bar: { horizontal: false, columnWidth: '50%', borderRadius: 3 } },
+                dataLabels: { 
+                    enabled: true, 
+                    formatter: val => val.toFixed(1) + '%', 
+                    style: { fontFamily: 'Cairo', fontSize: '10px' } 
+                },
+                yaxis: { 
+                    max: 120,
+                    labels: { 
+                        formatter: val => val + '%',
+                        style: { fontFamily: 'Cairo' } 
+                    } 
+                }
             };
             chart6 = new ApexCharts(document.querySelector("#chart-dept-achievement"), options6);
             chart6.render();
@@ -900,9 +912,12 @@
                 { name: 'المخطط', data: deptPlanneds }
             ]);
 
-            // جديد: تحديث بيانات شارت الأقسام لنسبة الإنجاز
+            // جديد: تحديث بيانات شارت الأقسام لنسبة الإنجاز (تم تعديله برمجياً لتحديث أسماء الأقسام بالمحور الأفقي X بشكل فوري ومثالي)
             chart6.updateOptions({
-                yaxis: { categories: deptNames }
+                xaxis: { 
+                    categories: deptNames,
+                    labels: { style: { fontFamily: 'Cairo', fontSize: '9px' } }
+                }
             });
             chart6.updateSeries([{
                 name: 'نسبة الإنجاز %',
