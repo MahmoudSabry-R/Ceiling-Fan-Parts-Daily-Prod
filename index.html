@@ -7,7 +7,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link class="text-slate-800" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- ApexCharts -->
@@ -729,12 +729,12 @@
                 notesList.innerHTML += `<li>لا تتوفر بيانات إنتاج كافية لعرض التحليل التشغيلي لخيارات البحث.</li>`;
             }
 
-            // توليد التوصيات الهندسية المخصصة وإجراءات التحسين ديناميكياً (محدث ليكون تفاعلياً وذكياً بالكامل)
+            // توليد التوصيات المخصصة وإجراءات التحسين ديناميكياً (محدث ليكون بسيطاً ومباشراً ومفهوماً للجميع)
             const recsList = document.getElementById('recommendations-list');
             recsList.innerHTML = '';
             
             if (filtered.length > 0) {
-                // 1. فحص كفاءة الأقسام والتحذير من المتعثرة
+                // 1. فحص كفاءة الأقسام والتحذير من المتعثرة بلغة بسيطة
                 let lowPerfDepts = [];
                 Object.keys(deptSummary).forEach(d => {
                     const p = deptSummary[d].planned;
@@ -745,21 +745,21 @@
                 });
                 if (lowPerfDepts.length > 0) {
                     lowPerfDepts.forEach(d => {
-                        recsList.innerHTML += `<li>تركيز جهود المتابعة الهندسية الفورية على قسم <span class="font-bold">(${d.name})</span> نظراً لانخفاض كفاءة الإنجاز فيه لتصل إلى <span class="text-amber-600 font-bold">${d.rate.toFixed(1)}%</span>.</li>`;
+                        recsList.innerHTML += `<li>لازم نتابع شغل قسم <span class="font-bold">(${d.name})</span> بشكل مباشر وسريع لأن نسبة إنتاجه ضعيفة ووصلت لـ <span class="text-amber-600 font-bold">${d.rate.toFixed(1)}%</span>، ومهم نفحص الماكينات هناك عشان نعرف سبب التعطيل.</li>`;
                     });
                 } else {
-                    recsList.innerHTML += `<li>جميع الأقسام التشغيلية تعمل بمعدل أداء متميز أعلى من 85%، يوصى بالحفاظ على وتيرة الصيانة الوقائية الحالية لضمان استمرارية هذا الإنتاج الممتاز.</li>`;
+                    recsList.innerHTML += `<li>كل الأقسام شغالة بشكل ممتاز وبنسبة فوق الـ 85%، ومهم نستمر على نفس جدول الصيانة الوقائية عشان نحافظ على المستوى ده دايماً.</li>`;
                 }
 
-                // 2. صيانة وقائية طارئة للصنف الأسوأ أداءً
+                // 2. صيانة وقائية طارئة للصنف الأسوأ أداءً بلغة بسيطة
                 if (worstItem !== "-" && worstItemRate < 90) {
                     const itemDeficit = itemSummary[worstItem].planned - itemSummary[worstItem].actual;
                     if (itemDeficit > 0) {
-                        recsList.innerHTML += `<li>جدولة جلسة صيانة فنية ومعايرة عاجلة للخطوط والآلات المخصصة لإنتاج صنف <span class="font-bold">(${worstItem})</span> لتلافي الفجوة الحالية البالغة <span class="text-red-500 font-bold">${formatNum(itemDeficit)} قطعة</span>.</li>`;
+                        recsList.innerHTML += `<li>محتاجين نعمل صيانة وتظبيط طارئ لماكينات إنتاج صنف <span class="font-bold">(${worstItem})</span> عشان نعوض العجز الفعلي اللي حصل في إنتاجه واللي وصل لـ <span class="text-red-500 font-bold">${formatNum(itemDeficit)} قطعة</span>.</li>`;
                     }
                 }
 
-                // 3. إعادة توزيع عمالة الصف الأول لدعم الوردية المتعثرة
+                // 3. إعادة توزيع عمالة الصف الأول لدعم الوردية المتعثرة بلغة بسيطة
                 let worstShiftName = "-";
                 let worstShiftRate = 120;
                 Object.keys(shiftPerformance).forEach(s => {
@@ -771,24 +771,17 @@
                     }
                 });
                 if (worstShiftName !== "-" && worstShiftRate < 90) {
-                    recsList.innerHTML += `<li>توجيه بعض عمالة ومراقبي الصف الأول من <span class="font-bold">${bestShiftName}</span> لتدعيم خطوط الإنتاج والآلات خلال <span class="font-bold">${worstShiftName}</span> لرفع نسبة كفاءتها الحالية البالغة <span class="text-amber-600 font-bold">${worstShiftRate.toFixed(1)}%</span>.</li>`;
+                    recsList.innerHTML += `<li>يفضل ننقل عمال من الفنيين الشاطرين من الوردية الناجحة <span class="font-bold">(${bestShiftName})</span> عشان يساعدوا ويدعموا خطوط الإنتاج في <span class="font-bold">(${worstShiftName})</span> لأن نسبة نجاح الوردية دي ضعيفة شوية وحالياً <span class="text-amber-600 font-bold">${worstShiftRate.toFixed(1)}%</span>.</li>`;
                 }
 
-                // 4. مراجعة المخزون في حالة وجود عجز كلي
-                if (gap < 0) {
-                    recsList.innerHTML += `<li>مراجعة سلاسل التوريد ومعدلات تدفق المواد الخام للتأكد من عدم حدوث "توقف جاف" (Stockouts) للآلات، مما يتسبب في إعاقة الكفاءة بموقع <span class="font-bold">SHA1</span>.</li>`;
-                } else {
-                    recsList.innerHTML += `<li>تعميم معايير العمل القياسية المتبعة في الورديات الناجحة لهذا اليوم على باقي الأيام والورديات لضمان ثبات معدلات الفائض الإنتاجي.</li>`;
-                }
-
-                // 5. توصيات عامة للماكينات ونظام الأعطال
+                // 4. توصيات عامة للماكينات ونظام الأعطال بلغة بسيطة
                 if (achievementRate < 80) {
-                    recsList.innerHTML += `<li>تفعيل نظام التتبع الفوري للأعطال وتقليص زمن تجهيز وإعداد الآلات (Setup Times) لرفع الكفاءة العامة البالغة <span class="text-red-600 font-bold">${achievementRate.toFixed(1)}%</span> لتتخطى خط الأمان (80%).</li>`;
+                    recsList.innerHTML += `<li>عشان نرفع نسبة الإنجاز الكلية للإنتاج اللي هي حالياً <span class="text-red-600 font-bold">${achievementRate.toFixed(1)}%</span>، يفضل نتابع الأعطال أول بأول ونقلل الوقت الضايع في تجهيز الماكينات عشان نعدي خط الأمان وهو 80%.</li>`;
                 } else {
-                    recsList.innerHTML += `<li>إجراء دراسة هندسية تفصيلية لتوحيد وتيرة الأداء عبر الورديات لضمان استمرارية استقرار معدل الكفاءة الحالي البالغ <span class="text-emerald-600 font-bold">${achievementRate.toFixed(1)}%</span>.</li>`;
+                    recsList.innerHTML += `<li>بما إن كفاءة الإنتاج الإجمالية ممتازة وواصلة لـ <span class="text-emerald-600 font-bold">${achievementRate.toFixed(1)}%</span>، يفضل نعمل دراسة سريعة عشان نخلي كل الورديات ثابتة على نفس الكفاءة دي دايماً.</li>`;
                 }
             } else {
-                recsList.innerHTML += `<li>لا تتوفر بيانات تشغيلية كافية لتوليد توصيات هندسية مخصصة.</li>`;
+                recsList.innerHTML += `<li>لا توجد بيانات كافية حالياً لإظهار اقتراحات التحسين.</li>`;
             }
 
             updateChartsData(shiftPerformance, itemSummary, achievementRate, deptSummary);
