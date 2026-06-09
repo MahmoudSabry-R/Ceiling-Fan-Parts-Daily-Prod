@@ -149,7 +149,7 @@
                 </div>
             </div>
 
-            <!-- Detailed Grid & Charts Section (تم تبديل ترتيب التشارتات هنا بناءً على طلبك) -->
+            <!-- Detailed Grid & Charts Section (تبديل الترتيب: الأقسام بالأعلى، والورديات بالأسفل) -->
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <!-- Charts Grid -->
                 <div class="lg:col-span-4 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
@@ -158,32 +158,32 @@
                         التحليل البياني للأداء الشامل (الورديات - الأصناف - الأقسام)
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Chart 4: Segmented Donut / Gauge (أصبح بالأعلى) -->
+                        <!-- Chart 4: Segmented Donut / Gauge (بالأعلى) -->
                         <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
                             <h3 class="text-xs font-bold text-center text-slate-700 mb-2">توزيع ومعدل الإنجاز العام</h3>
                             <div id="chart-donut-distribution" class="h-56 flex items-center justify-center"></div>
                         </div>
-                        <!-- Chart 5 (New): Actual vs Planned by Department (أصبح بالأعلى) -->
+                        <!-- Chart 5: Actual vs Planned by Department (بالأعلى) -->
                         <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
                             <h3 class="text-xs font-bold text-center text-slate-700 mb-2">فعلي مقابل مخطط - بالأقسام</h3>
                             <div id="chart-dept-comparison" class="h-56"></div>
                         </div>
-                        <!-- Chart 6 (New & Corrected): Achievement Rate % by Department (أصبح بالأعلى) -->
+                        <!-- Chart 6: Achievement Rate % by Department (بالأعلى ورأسي) -->
                         <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
                             <h3 class="text-xs font-bold text-center text-slate-700 mb-2">نسبة الإنجاز % - بالأقسام</h3>
                             <div id="chart-dept-achievement" class="h-56"></div>
                         </div>
-                        <!-- Chart 1: Actual Production by Shift (أصبح بالأسفل) -->
+                        <!-- Chart 1: Actual Production by Shift (بالأسفل) -->
                         <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
                             <h3 class="text-xs font-bold text-center text-slate-700 mb-2">الإنتاج الفعلي - بالوردية (قطعة)</h3>
                             <div id="chart-actual-shift" class="h-56"></div>
                         </div>
-                        <!-- Chart 2: Actual vs Planned by Item (أصبح بالأسفل) -->
+                        <!-- Chart 2: Actual vs Planned by Item (بالأسفل) -->
                         <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
                             <h3 class="text-xs font-bold text-center text-slate-700 mb-2">فعلي مقابل مخطط - بالصنف</h3>
                             <div id="chart-item-comparison" class="h-56"></div>
                         </div>
-                        <!-- Chart 3: Achievement Rate Line (أصبح بالأسفل) -->
+                        <!-- Chart 3: Achievement Rate Line (بالأسفل) -->
                         <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
                             <h3 class="text-xs font-bold text-center text-slate-700 mb-2">نسبة الإنجاز % - بالوردية</h3>
                             <div id="chart-achievement-trend" class="h-56"></div>
@@ -192,7 +192,7 @@
                 </div>
             </div>
 
-            <!-- Main Production Table (تمت إضافة عمود القسم قبل عمود الوردية) -->
+            <!-- Main Production Table (جدول الإنتاج التفصيلي مع عمود القسم قبل عمود الوردية) -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-md font-bold text-elaraby-navy flex items-center">
@@ -206,7 +206,7 @@
                         <thead>
                             <tr class="bg-elaraby-navy text-white font-bold text-[11px]">
                                 <th class="p-3 rounded-r">التاريخ</th>
-                                <th class="p-3">القسم</th> <!-- الجديد -->
+                                <th class="p-3">القسم</th>
                                 <th class="p-3">الوردية</th>
                                 <th class="p-3">اسم الصنف</th>
                                 <th class="p-3 text-center">معدل مخطط (ساعة)</th>
@@ -222,7 +222,7 @@
                         </tbody>
                         <tfoot>
                             <tr class="bg-slate-100 font-bold text-elaraby-navy text-sm">
-                                <td colspan="6" class="p-3 text-right rounded-r">الإجمالي الكلي لخيارات البحث:</td> <!-- تعديل الـ colspan لـ 6 -->
+                                <td colspan="6" class="p-3 text-right rounded-r">الإجمالي الكلي لخيارات البحث:</td>
                                 <td id="total-planned-row" class="p-3 text-center font-mono">-</td>
                                 <td id="total-actual-row" class="p-3 text-center font-mono">-</td>
                                 <td id="total-gap-row" class="p-3 text-center font-mono">-</td>
@@ -265,7 +265,7 @@
                     </ul>
                 </div>
 
-                <!-- Recommendations Card (فصل وتوسيع التوصيات بلغة مبسطة ومباشرة) -->
+                <!-- Recommendations Card (فصل وتوسيع التوصيات بلغة فصحى مبسطة وواضحة) -->
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                     <h3 class="text-sm font-bold text-elaraby-navy mb-3 pb-2 border-b border-slate-100">
                         <i class="fa-solid fa-comment-dots ml-1.5 text-elaraby-gold"></i>التوصيات وإجراءات التحسين
@@ -577,12 +577,13 @@
                     shiftPerformance[row.shift].planned += planned;
                 }
 
-                let shortItemName = row.item.replace("الجديدهTCF56", "").trim();
-                if (!itemSummary[shortItemName]) {
-                    itemSummary[shortItemName] = { actual: 0, planned: 0 };
+                // تم التعديل هنا: نأخذ اسم المنتج بالكامل كما هو في الإكسيل والجدول لضمان ثبات المسميات بالكامل
+                let itemName = row.item.trim();
+                if (!itemSummary[itemName]) {
+                    itemSummary[itemName] = { actual: 0, planned: 0 };
                 }
-                itemSummary[shortItemName].actual += row.actual_qty;
-                itemSummary[shortItemName].planned += planned;
+                itemSummary[itemName].actual += row.actual_qty;
+                itemSummary[itemName].planned += planned;
 
                 // تجميع بيانات الأقسام
                 let deptName = row.dept ? row.dept.trim() : "غير محدد";
@@ -731,7 +732,7 @@
                 notesList.innerHTML += `<li>لا تتوفر بيانات إنتاج كافية لعرض التحليل التشغيلي لخيارات البحث.</li>`;
             }
 
-            // توليد التوصيات المخصصة وإجراءات التحسين ديناميكياً (محدث ليكون بسيطاً ومباشراً ومفهوماً للجميع)
+            // توليد التوصيات المخصصة وإجراءات التحسين ديناميكياً (محدث ليكون بلغة فصحى مبسطة وواضحة للجميع)
             const recsList = document.getElementById('recommendations-list');
             recsList.innerHTML = '';
             
